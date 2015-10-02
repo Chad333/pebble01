@@ -4,10 +4,16 @@
         ""
     ],
     "companyName": "chad333@gmail.com",
-    "longName": "CalvinHobbes",
+    "longName": "Calvin and Hobbes",
     "projectType": "native",
     "resources": {
         "media": [
+            {
+                "file": "images/menu.png",
+                "menuIcon": true,
+                "name": "IMAGE_MENU_ICON",
+                "type": "png"
+            },
             {
                 "file": "images/nobt3.png",
                 "name": "IMAGE_BT_ICON",
@@ -26,7 +32,7 @@
         ]
     },
     "sdkVersion": "3",
-    "shortName": "Calvin",
+    "shortName": "Calvin&Hobbes",
     "targetPlatforms": [
         "aplite",
         "basalt"

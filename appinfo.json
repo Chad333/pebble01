@@ -1,0 +1,39 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "chad333@gmail.com",
+    "longName": "CalvinHobbes",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/nobt3.png",
+                "name": "IMAGE_BT_ICON",
+                "type": "png"
+            },
+            {
+                "file": "images/background3.png",
+                "name": "IMAGE_BACKGROUND3",
+                "type": "png"
+            },
+            {
+                "file": "fonts/CALVINN.TTF",
+                "name": "FONT_CALVIN_40",
+                "type": "font"
+            }
+        ]
+    },
+    "sdkVersion": "3",
+    "shortName": "Calvin",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
+    "uuid": "3a49d179-4654-4d0d-b586-c71e150a316d",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}

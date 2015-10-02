@@ -9,6 +9,16 @@
     "resources": {
         "media": [
             {
+                "file": "images/bubble2.png",
+                "name": "IMAGE_BUBBLE2",
+                "type": "png"
+            },
+            {
+                "file": "images/bubble.png",
+                "name": "IMAGE_BUBBLE",
+                "type": "png"
+            },
+            {
                 "file": "images/menu.png",
                 "menuIcon": true,
                 "name": "IMAGE_MENU_ICON",

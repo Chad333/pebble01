@@ -7,6 +7,9 @@ static BitmapLayer *s_background_layer;
 static GBitmap *s_background_bitmap;
 static BitmapLayer *s_background_layer, *s_bt_icon_layer;
 static GBitmap *s_background_bitmap, *s_bt_icon_bitmap;
+static BitmapLayer *s_background_layer, *s_batt_icon_layer;
+static GBitmap *s_background_bitmap, *s_batt_icon_bitmap;
+static TextLayer *s_batt_layer;
 
 static void bluetooth_callback(bool connected) {
   // Show icon if disconnected
@@ -58,12 +61,24 @@ static void main_window_load(Window *window){
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
   
   s_bt_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BT_ICON);
+  s_batt_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BUBBLE2);
 
   s_bt_icon_layer = bitmap_layer_create(GRect(110, 1, 35, 65));
   bitmap_layer_set_bitmap(s_bt_icon_layer, s_bt_icon_bitmap);
+  s_batt_icon_layer = bitmap_layer_create(GRect(110, 115, 35, 65));
+  bitmap_layer_set_bitmap(s_batt_icon_layer, s_batt_icon_bitmap);
+  s_batt_layer = text_layer_create(GRect(112,117,40,60));
+  text_layer_set_background_color(s_batt_layer,GColorClear);
+  text_layer_set_text_color(s_batt_layer,GColorBlack);
+  text_layer_set_font(s_batt_layer, s_time_font);
+  text_layer_set_text_alignment(s_batt_layer, GTextAlignmentCenter);
 
   layer_add_child(window_get_root_layer(window),text_layer_get_layer(s_time_layer));
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_bt_icon_layer));
+  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_batt_icon_layer));
+  layer_set_hidden(bitmap_layer_get_layer(s_batt_icon_layer),true);
+  layer_add_child(window_get_root_layer(window),text_layer_get_layer(s_batt_layer));
+  //text_layer_set_text(s_batt_layer,"9");
     // Show the correct state of the BT connection from the start
   bluetooth_callback(bluetooth_connection_service_peek());
 }
@@ -79,6 +94,9 @@ static void main_window_unload(Window *window){
   
   gbitmap_destroy(s_bt_icon_bitmap);
   bitmap_layer_destroy(s_bt_icon_layer);
+  
+  gbitmap_destroy(s_batt_icon_bitmap);
+  bitmap_layer_destroy(s_batt_icon_layer);
 }
 static void init() {
   s_main_window = window_create();

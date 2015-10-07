@@ -27,7 +27,7 @@ static void timer_callback(void *data) {
 static void tap_handler(AccelAxisType axis, int32_t direction) {
   layer_set_hidden(bitmap_layer_get_layer(s_batt_icon_layer),false);
   handle_battery(battery_state_service_peek());
-  s_timer = app_timer_register(1500, timer_callback, NULL);
+  s_timer = app_timer_register(1700, timer_callback, NULL);
 }
 
 static void bluetooth_callback(bool connected) {
@@ -35,7 +35,6 @@ static void bluetooth_callback(bool connected) {
   layer_set_hidden(bitmap_layer_get_layer(s_bt_icon_layer), connected);
 
   if(!connected) {
-    // Issue a vibrating alert
     vibes_double_pulse();
   }
 }
@@ -56,8 +55,6 @@ static void update_time() {
     // Use 12 hour format
     strftime(buffer, sizeof("00:00"), "%I:%M", tick_time);
   }
-
-  // Display this time on the TextLayer
   text_layer_set_text(s_time_layer, buffer);
 }
 
@@ -83,11 +80,11 @@ static void main_window_load(Window *window){
   s_bt_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BT_ICON);
   s_batt_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BUBBLE2);
 
-  s_bt_icon_layer = bitmap_layer_create(GRect(110, 1, 35, 65));
+  s_bt_icon_layer = bitmap_layer_create(GRect(107, 1, 35, 65));
   bitmap_layer_set_bitmap(s_bt_icon_layer, s_bt_icon_bitmap);
-  s_batt_icon_layer = bitmap_layer_create(GRect(110, 115, 35, 65));
+  s_batt_icon_layer = bitmap_layer_create(GRect(107, 110, 35, 65));
   bitmap_layer_set_bitmap(s_batt_icon_layer, s_batt_icon_bitmap);
-  s_batt_layer = text_layer_create(GRect(111,140,40,60));
+  s_batt_layer = text_layer_create(GRect(108,137,40,60));
   text_layer_set_background_color(s_batt_layer,GColorClear);
   text_layer_set_text_color(s_batt_layer,GColorBlack);
   text_layer_set_font(s_batt_layer, s_batt_font);
@@ -98,26 +95,18 @@ static void main_window_load(Window *window){
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_batt_icon_layer));
   layer_set_hidden(bitmap_layer_get_layer(s_batt_icon_layer),true);
   layer_add_child(window_get_root_layer(window),text_layer_get_layer(s_batt_layer));
-  //text_layer_set_text(s_batt_layer,"9");
-    // Show the correct state of the BT connection from the start
   bluetooth_callback(bluetooth_connection_service_peek());
   battery_state_service_subscribe(handle_battery);
   
 }
 static void main_window_unload(Window *window){
-  // Destroy GBitmap
   gbitmap_destroy(s_background_bitmap);
-
-  // Destroy BitmapLayer
   bitmap_layer_destroy(s_background_layer);
-
   text_layer_destroy(s_time_layer);
   fonts_unload_custom_font(s_time_font);
   fonts_unload_custom_font(s_batt_font);
-  
   gbitmap_destroy(s_bt_icon_bitmap);
   bitmap_layer_destroy(s_bt_icon_layer);
-  
   gbitmap_destroy(s_batt_icon_bitmap);
   bitmap_layer_destroy(s_batt_icon_layer);
 }

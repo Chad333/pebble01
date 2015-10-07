@@ -36,6 +36,11 @@
             },
             {
                 "file": "fonts/CALVINN.TTF",
+                "name": "FONT_CALVIN_18",
+                "type": "font"
+            },
+            {
+                "file": "fonts/CALVINN.TTF",
                 "name": "FONT_CALVIN_40",
                 "type": "font"
             }

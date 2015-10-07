@@ -3,6 +3,7 @@
 static Window *s_main_window;
 static TextLayer *s_time_layer;
 static GFont s_time_font;
+static GFont s_batt_font;
 static BitmapLayer *s_background_layer;
 static GBitmap *s_background_bitmap;
 static BitmapLayer *s_background_layer, *s_bt_icon_layer;
@@ -10,6 +11,24 @@ static GBitmap *s_background_bitmap, *s_bt_icon_bitmap;
 static BitmapLayer *s_background_layer, *s_batt_icon_layer;
 static GBitmap *s_background_bitmap, *s_batt_icon_bitmap;
 static TextLayer *s_batt_layer;
+static AppTimer *s_timer;
+
+static void handle_battery(BatteryChargeState charge_state) {
+  static char buffer[] = "00";
+  snprintf(buffer, sizeof(buffer), "%d", charge_state.charge_percent);
+  text_layer_set_text(s_batt_layer, buffer);
+}
+
+static void timer_callback(void *data) {
+  layer_set_hidden(bitmap_layer_get_layer(s_batt_icon_layer),true);
+  text_layer_set_text(s_batt_layer,"");
+}
+
+static void tap_handler(AccelAxisType axis, int32_t direction) {
+  layer_set_hidden(bitmap_layer_get_layer(s_batt_icon_layer),false);
+  handle_battery(battery_state_service_peek());
+  s_timer = app_timer_register(1500, timer_callback, NULL);
+}
 
 static void bluetooth_callback(bool connected) {
   // Show icon if disconnected
@@ -56,6 +75,7 @@ static void main_window_load(Window *window){
   text_layer_set_background_color(s_time_layer,GColorClear);
   text_layer_set_text_color(s_time_layer,GColorBlack);
   s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_CALVIN_40));
+  s_batt_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_CALVIN_18));
   
   text_layer_set_font(s_time_layer, s_time_font);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
@@ -67,10 +87,10 @@ static void main_window_load(Window *window){
   bitmap_layer_set_bitmap(s_bt_icon_layer, s_bt_icon_bitmap);
   s_batt_icon_layer = bitmap_layer_create(GRect(110, 115, 35, 65));
   bitmap_layer_set_bitmap(s_batt_icon_layer, s_batt_icon_bitmap);
-  s_batt_layer = text_layer_create(GRect(112,117,40,60));
+  s_batt_layer = text_layer_create(GRect(111,140,40,60));
   text_layer_set_background_color(s_batt_layer,GColorClear);
   text_layer_set_text_color(s_batt_layer,GColorBlack);
-  text_layer_set_font(s_batt_layer, s_time_font);
+  text_layer_set_font(s_batt_layer, s_batt_font);
   text_layer_set_text_alignment(s_batt_layer, GTextAlignmentCenter);
 
   layer_add_child(window_get_root_layer(window),text_layer_get_layer(s_time_layer));
@@ -81,6 +101,8 @@ static void main_window_load(Window *window){
   //text_layer_set_text(s_batt_layer,"9");
     // Show the correct state of the BT connection from the start
   bluetooth_callback(bluetooth_connection_service_peek());
+  battery_state_service_subscribe(handle_battery);
+  
 }
 static void main_window_unload(Window *window){
   // Destroy GBitmap
@@ -91,6 +113,7 @@ static void main_window_unload(Window *window){
 
   text_layer_destroy(s_time_layer);
   fonts_unload_custom_font(s_time_font);
+  fonts_unload_custom_font(s_batt_font);
   
   gbitmap_destroy(s_bt_icon_bitmap);
   bitmap_layer_destroy(s_bt_icon_layer);
@@ -108,6 +131,7 @@ static void init() {
   
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
   bluetooth_connection_service_subscribe(bluetooth_callback);
+  accel_tap_service_subscribe(tap_handler);
   
   window_stack_push(s_main_window, true);
   update_time();
